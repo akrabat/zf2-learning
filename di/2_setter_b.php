@@ -34,29 +34,24 @@ unset($album);
 echo PHP_EOL. 'DI: $album = $di->get(\'My\Album\', array(\'Jonathan Coulton\')' . PHP_EOL;
 
 use Zend\Di\DependencyInjector,
-    Zend\Di\Definition,
-    Zend\Di\Definition\Builder;
+    Zend\Di\Definition;
 
-$method = new Builder\InjectionMethod();
+// Builder definition
+$method = new Definition\Builder\InjectionMethod();
 $method->setName('setArtist');
 $method->addParameter('artist', 'My\Artist');
 
-$class = new Builder\PhpClass();
+$class = new Definition\Builder\PhpClass();
 $class->setName('My\Album');
 $class->addInjectionMethod($method);
 
-$builder = new Definition\BuilderDefinition();
-$builder->addClass($class);
+$builderDef = new Definition\BuilderDefinition();
+$builderDef->addClass($class);
 
-$aDef = new Definition\AggregateDefinition();
-$aDef->addDefinition($builder);
 
-$runtimeDef = new Definition\RuntimeDefinition();
-$runtimeDef->getIntrospectionRuleset()->addSetterRule('paramCanBeOptional', false);
-$aDef->addDefinition($runtimeDef);
-
+// Test it
 $di = new \Zend\Di\DependencyInjector();
-$di->setDefinition($aDef);
+$di->setDefinition($builderDef);
 
 $album = $di->get('My\Album', array('Jonathan Coulton'));
 var_dump($album);
