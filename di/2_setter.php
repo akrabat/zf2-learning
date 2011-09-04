@@ -56,7 +56,6 @@ $runtimeDef->getIntrospectionRuleset()->addSetterRule('paramCanBeOptional', fals
 $aDef->addDefinition($runtimeDef);
 
 $di = new \Zend\Di\DependencyInjector();
-//$di->getDefinition()->getIntrospectionRuleset()->addSetterRule('paramCanBeOptional', false);
 $di->setDefinition($aDef);
 
 $album = $di->get('My\Album', array('Jonathan Coulton'));
