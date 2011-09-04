@@ -16,6 +16,7 @@ class Artist
 class Album
 {
     protected $artist;
+    
     public function setArtist(Artist $artist)
     {
         $this->artist = $artist;
@@ -32,15 +33,17 @@ unset($album);
 
 echo PHP_EOL. 'Config injection of parameter: $album = $di->get(\'My\Album\')' . PHP_EOL;
 $di = new \Zend\Di\DependencyInjector();
+$di->getDefinition()->getIntrospectionRuleset()->addSetterRule('paramCanBeOptional', false);
 $di->getInstanceManager()->setParameters('My\Artist', array(
     'name' => 'The Beatles',
 ));
 $album = $di->get('My\Album');
 var_dump($album);
 
-// echo PHP_EOL. 'Dynamic injection of parameter: $album2 = $di->get(\'My\Album\', array(\'Jonathan Coulton\')' . PHP_EOL;
-// unset($di);
-// $di = new \Zend\Di\DependencyInjector();
-// $album2 = $di->newInstance('My\Album', array('name'=>'Jonathan Coulton'));
-// var_dump($album2);
+echo PHP_EOL. 'Dynamic injection of parameter: $album2 = $di->get(\'My\Album\', array(\'Jonathan Coulton\')' . PHP_EOL;
+unset($di);
+$di = new \Zend\Di\DependencyInjector();
+$di->getDefinition()->getIntrospectionRuleset()->addSetterRule('paramCanBeOptional', false);
+$album2 = $di->newInstance('My\Album', array('name'=>'Jonathan Coulton'));
+var_dump($album2);
 

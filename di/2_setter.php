@@ -45,15 +45,18 @@ $class = new Builder\PhpClass();
 $class->setName('My\Album');
 $class->addInjectionMethod($method);
 
-
-$builder = new Definition\BuilderDefinition;
+$builder = new Definition\BuilderDefinition();
 $builder->addClass($class);
 
-$aDef = new Definition\AggregateDefinition;
+$aDef = new Definition\AggregateDefinition();
 $aDef->addDefinition($builder);
-$aDef->addDefinition(new Definition\RuntimeDefinition);
+
+$runtimeDef = new Definition\RuntimeDefinition();
+$runtimeDef->getIntrospectionRuleset()->addSetterRule('paramCanBeOptional', false);
+$aDef->addDefinition($runtimeDef);
 
 $di = new \Zend\Di\DependencyInjector();
+//$di->getDefinition()->getIntrospectionRuleset()->addSetterRule('paramCanBeOptional', false);
 $di->setDefinition($aDef);
 
 $album = $di->get('My\Album', array('Jonathan Coulton'));
