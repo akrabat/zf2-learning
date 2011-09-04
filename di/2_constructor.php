@@ -7,10 +7,10 @@ include __DIR__ . "/../load_zf.php";
 class Artist
 {
     protected $name;
-        public function __construct($name)
-        {
-            $this->name = $name;
-        }
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
 }
 
 class Album
