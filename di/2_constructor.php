@@ -38,7 +38,7 @@ $di->getInstanceManager()->setParameters('My\Artist', array(
 $album = $di->get('My\Album');
 var_dump($album);
 
-echo PHP_EOL. 'Dynamic injection of parameter : $album2 = $di->get(\'My\Album\', array(\'Jonathan Coulton\')' . PHP_EOL;
+echo PHP_EOL. 'Dynamic injection of parameter: $album2 = $di->get(\'My\Album\', array(\'Jonathan Coulton\')' . PHP_EOL;
 unset($di);
 $di = new \Zend\Di\DependencyInjector();
 $album2 = $di->newInstance('My\Album', array('name'=>'Jonathan Coulton'));
