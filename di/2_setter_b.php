@@ -50,21 +50,16 @@ $class->addInjectionMethod($method);
 
 $builderDef->addClass($class);
 
-// Builder definition for My\Artist
-$method = new Definition\Builder\InjectionMethod();
-$method->setName('__construct');
-$method->addParameter('name');
-
-$class = new Definition\Builder\PhpClass();
-$class->setName('My\Artist');
-$class->addInjectionMethod($method);
-
-$builderDef->addClass($class);
+$diDefAggregate = new Definition\AggregateDefinition();
+// First add in our builder definition
+$diDefAggregate->addDefinition($builderDef);
+// Then add in the usual runtime one for My\Artist
+$diDefAggregate->addDefinition(new Definition\RuntimeDefinition());
 
 
 // Test it
 $di = new \Zend\Di\DependencyInjector();
-$di->setDefinition($builderDef);
+$di->setDefinition($diDefAggregate);
 
-$album = $di->get('My\Album', array('name'=>'Jonathan Coulton'));
+$album = $di->get('My\Album', array('artist'=>'Jonathan Coulton'));
 var_dump($album);
