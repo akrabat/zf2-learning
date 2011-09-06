@@ -20,7 +20,7 @@ if (!$env) {
     $env = 'production';
 }
 
-$config = new Zend\Config\Ini(__DIR__ . '/../configs/application.ini', $env);
+$config = new Zend\Config\Ini(__DIR__ . '/../modules/Application/configs/application.ini', $env);
 $app = new Zf2Mvc\Application();
 $bootstrap = new Application\Bootstrap($config);
 $bootstrap->bootstrap($app);
