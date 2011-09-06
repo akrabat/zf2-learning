@@ -36,7 +36,10 @@ echo PHP_EOL. 'DI: $album = $di->get(\'My\Album\', array(\'Jonathan Coulton\')' 
 use Zend\Di\DependencyInjector,
     Zend\Di\Definition;
 
-// Builder definition
+// Create builder definitions
+$builderDef = new Definition\BuilderDefinition();
+
+// Builder definition for My\Album
 $method = new Definition\Builder\InjectionMethod();
 $method->setName('setArtist');
 $method->addParameter('artist', 'My\Artist');
@@ -45,7 +48,17 @@ $class = new Definition\Builder\PhpClass();
 $class->setName('My\Album');
 $class->addInjectionMethod($method);
 
-$builderDef = new Definition\BuilderDefinition();
+$builderDef->addClass($class);
+
+// Builder definition for My\Artist
+$method = new Definition\Builder\InjectionMethod();
+$method->setName('__construct');
+$method->addParameter('name');
+
+$class = new Definition\Builder\PhpClass();
+$class->setName('My\Artist');
+$class->addInjectionMethod($method);
+
 $builderDef->addClass($class);
 
 
@@ -53,5 +66,5 @@ $builderDef->addClass($class);
 $di = new \Zend\Di\DependencyInjector();
 $di->setDefinition($builderDef);
 
-$album = $di->get('My\Album', array('Jonathan Coulton'));
+$album = $di->get('My\Album', array('name'=>'Jonathan Coulton'));
 var_dump($album);
