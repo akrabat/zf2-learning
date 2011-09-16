@@ -28,22 +28,37 @@ class MySpecificTarget extends MyTarget
 
 class MyListener
 {
+    protected $eventHandlerForMyTarget = null;
+    protected $eventHandlerForMySpecificTarget = null;
+    
     public function listenForMyTargetEvent()
     {
         $eventManager = EventManager\StaticEventManager::getInstance();
-        $eventManager->attach('MyTarget', 'eventName', array($this, 'eventReceiverMethod'));
+        $this->eventHandlerForMyTarget = $eventManager->attach('MyTarget', 'eventName', array($this, 'eventReceiverMethod'));
     }
 
     public function listenForMySpecificTargetEvent()
     {
         $eventManager = EventManager\StaticEventManager::getInstance();
-        $eventManager->attach('MySpecificTarget', 'eventName', array($this, 'eventReceiverMethod'));
+        $this->eventHandlerForMySpecificTarget = $eventManager->attach('MySpecificTarget', 'eventName', array($this, 'eventReceiverMethod'));
     }
     
     public function eventReceiverMethod(EventManager\Event $e)
     {
         echo "An event has happened! Event name = '" . $e->getName() . "'\n";
-        var_dump($this);
+    }
+    
+    public function __destruct()
+    {
+        $eventManager = EventManager\StaticEventManager::getInstance();
+        if ($this->eventHandlerForMyTarget) {
+            echo "detaching eventHandlerForMyTarget\n";
+            $eventManager->detach($this->eventHandlerForMyTarget);
+        }
+        if ($this->eventHandlerForMySpecificTarget) {
+            echo "detaching eventHandlerForMySpecificTarget";
+            $eventManager->detach($this->eventHandlerForMySpecificTarget);
+        }
     }
 }
 
