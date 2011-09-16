@@ -56,7 +56,7 @@ $target = new MySpecificTarget();
 $target->doSomethingThatTriggersAnEvent();
 
 
-unset($listener);
+unset($listener); $listener = null;
 
 
 echo "\nListen for MySpecificTarget\n";
