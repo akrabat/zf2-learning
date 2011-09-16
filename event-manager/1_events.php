@@ -13,7 +13,7 @@ class MyTarget
     
     public function __construct()
     {
-        $this->eventManager = new EventManager\EventManager();
+        $this->eventManager = new EventManager\EventManager(__CLASS__);
     }
     
     public function attachAListener()
@@ -43,5 +43,5 @@ $obj->doSomethingThatTriggersAnEvent();
 echo "\nStatic attachment\n";
 $obj = new MyTarget();
 $eventManager = EventManager\StaticEventManager::getInstance();
-$eventManager->attach('MyTarget', 'eventName', array($obj, 'eventReceiverMethod'));
+$eventManager->attach(get_class($obj), 'eventName', array($obj, 'eventReceiverMethod'));
 $obj->doSomethingThatTriggersAnEvent();
