@@ -21,7 +21,7 @@ class MySpecificTarget extends MyTarget
 {
     public function doSomethingThatTriggersAnEvent()
     {
-        $this->eventManager->trigger('eventName', $this, array(1, 2, 3));
+        $this->eventManager->trigger('eventName', $this);
     }
 }
 
@@ -33,20 +33,35 @@ class MyListener
         $eventManager = EventManager\StaticEventManager::getInstance();
         $eventManager->attach('MyTarget', 'eventName', array($this, 'eventReceiverMethod'));
     }
+
+    public function listenForMySpecificTargetEvent()
+    {
+        $eventManager = EventManager\StaticEventManager::getInstance();
+        $eventManager->attach('MySpecificTarget', 'eventName', array($this, 'eventReceiverMethod'));
+    }
     
     public function eventReceiverMethod(EventManager\Event $e)
     {
-        echo "An event has happened!\n";
-        var_dump($e->getName());
-        var_dump($e->getParams());
+        echo "An event has happened! Event name = '" . $e->getName() . "'\n";
+        var_dump($this);
     }
 }
 
 
+echo "\nListen for MyTarget\n";
 $listener = new MyListener();
 $listener->listenForMyTargetEvent();
 
+$target = new MySpecificTarget();
+$target->doSomethingThatTriggersAnEvent();
 
+
+unset($listener);
+
+
+echo "\nListen for MySpecificTarget\n";
+$listener = new MyListener();
+$listener->listenForMySpecificTargetEvent();
 
 $target = new MySpecificTarget();
 $target->doSomethingThatTriggersAnEvent();
