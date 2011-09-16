@@ -63,5 +63,4 @@ echo "\nListen for MySpecificTarget\n";
 $listener = new MyListener();
 $listener->listenForMySpecificTargetEvent();
 
-$target = new MySpecificTarget();
 $target->doSomethingThatTriggersAnEvent();
