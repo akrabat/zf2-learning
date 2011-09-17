@@ -44,7 +44,7 @@ class MyModel
         
         // Trigger post event
         $params['__RESULT__'] = $data;
-        $this->events()->trigger(__FUNCTION__ . '.post', $this, $params);
+        $this->eventManager->trigger(__FUNCTION__ . '.post', $this, $params);
         
         return $data;
     }
@@ -56,24 +56,56 @@ class MyLogger
 {
     public function attach(EventManager\EventCollection $events)
     {
-        $events->attach('getData.pre', array($this, 'log'));
+        $events->attach('getData.pre', array($this, 'log'), 100);
     }
     
     public function log(EventManager\Event $e)
     {
         $name = $e->getName();
         $id = $e->getParam('id');
-        echo "Logging: $name, $id\n";
+        echo "Logging: event: $name, id: $id\n";
+    }
+}
+
+class MyCache
+{
+    public function attach(EventManager\EventCollection $events)
+    {
+        $events->attach('getData.pre', array($this, 'getCache'));
+        $events->attach('getData.post', array($this, 'saveCache'));
+    }
+    
+    public function getCache(EventManager\Event $e)
+    {
+        $id = $e->getParam('id');
+        if ($id == 23) {
+            echo "We have a cache for $id already\n";
+            return array(1,2,3);
+        }
+        return null;
+    }
+    
+    public function saveCache(EventManager\Event $e)
+    {
+        $id = $e->getParam('id');
+        echo "Saving cache for id $id\n";
+        return null;
     }
 }
 
 
 $model = new MyModel();
 
-// Attach the logger's listener to the model
+// Attach the cache's listeners to the model
 $logger = new MyLogger();
 $logger->attach($model->getEventManager());
 
+// Attach the logger's listener to the model
+$cache = new MyCache();
+$cache->attach($model->getEventManager());
+
 // Now we get our data
 $model->getData(1);
+$model->getData(23);
+$model->getData(2);
 
