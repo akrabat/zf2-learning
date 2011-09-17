@@ -105,7 +105,12 @@ $cache = new MyCache();
 $cache->attach($model->getEventManager());
 
 // Now we get our data
+echo "Getting data for id 1\n";
 $model->getData(1);
+
+echo "\nGetting data for id 23\n";
 $model->getData(23);
+
+echo "\nGetting data for id 2\n";
 $model->getData(2);
 
