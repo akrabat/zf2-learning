@@ -48,16 +48,16 @@ class MyListener
         echo "An event has happened! Event name = '" . $e->getName() . "'\n";
     }
     
-    public function __destruct()
+    public function detachListeners()
     {
         $eventManager = EventManager\StaticEventManager::getInstance();
         if ($this->eventHandlerForMyTarget) {
             echo "detaching eventHandlerForMyTarget\n";
-            $eventManager->detach($this->eventHandlerForMyTarget);
+            $eventManager->detach('MyTarget', $this->eventHandlerForMyTarget);
         }
         if ($this->eventHandlerForMySpecificTarget) {
-            echo "detaching eventHandlerForMySpecificTarget";
-            $eventManager->detach($this->eventHandlerForMySpecificTarget);
+            echo "detaching eventHandlerForMySpecificTarget\n";
+            $eventManager->detach('MySpecificTarget', $this->eventHandlerForMySpecificTarget);
         }
     }
 }
@@ -70,12 +70,11 @@ $listener->listenForMyTargetEvent();
 $target = new MySpecificTarget();
 $target->doSomethingThatTriggersAnEvent();
 
-
+$listener->detachListeners();
 unset($listener); $listener = null;
 
-
 echo "\nListen for MySpecificTarget\n";
-$listener = new MyListener();
-$listener->listenForMySpecificTargetEvent();
+$listener2 = new MyListener();
+$listener2->listenForMySpecificTargetEvent();
 
 $target->doSomethingThatTriggersAnEvent();
