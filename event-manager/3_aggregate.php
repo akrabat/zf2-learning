@@ -40,7 +40,7 @@ class MyListener implements EventManager\HandlerAggregate
     public function attach(EventManager\EventCollection $events)
     {
         $this->handlers[] = $events->attach('event1', array($this, 'doSomething'));
-        $this->handlers[] = $events->attach('event2', array($this, 'doSomething'));
+        $this->handlers[] = $events->attach('event2', array($this, 'doSomethingElse'));
     }
     
     public function detach(EventManager\EventCollection $events)
@@ -54,7 +54,12 @@ class MyListener implements EventManager\HandlerAggregate
    
     public function doSomething(EventManager\Event $e)
     {
-        echo "An event has happened! Event name = '" . $e->getName() . "'\n";
+        echo "An event1 has happened! Event name = '" . $e->getName() . "'\n";
+    }
+    
+    public function doSomethingElse(EventManager\Event $e)
+    {
+        echo "An event2 has happened! Event name = '" . $e->getName() . "'\n";
     }
     
 }
