@@ -18,7 +18,8 @@ class MyTarget
     
     public function attachAListener()
     {
-        $this->eventManager->attach('eventName', array($this, 'eventReceiverMethod'));
+        $this->eventManager->attach('eventName', 
+            array($this, 'eventReceiverMethod'));
     }
     
     public function eventReceiverMethod(EventManager\Event $e)
@@ -31,7 +32,8 @@ class MyTarget
     
     public function doSomethingThatTriggersAnEvent()
     {
-        $this->eventManager->trigger('eventName', $this, array(1, 2, 3));
+        $this->eventManager->trigger('eventName', $this, 
+            array('one'=>1, 'two'=>2, 'three'=>3));
     }
 }
 
