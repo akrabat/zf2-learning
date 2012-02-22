@@ -33,7 +33,7 @@ unset($album);
 
 echo PHP_EOL. 'DI: $album = $di->get(\'My\Album\', array(\'Jonathan Coulton\')' . PHP_EOL;
 
-use Zend\Di\DependencyInjector,
+use Zend\Di\Di,
     Zend\Di\Definition;
 
 // Create builder definitions

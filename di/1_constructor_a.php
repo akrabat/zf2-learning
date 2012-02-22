@@ -27,7 +27,7 @@ var_dump($album);
 unset($album);
 
 echo PHP_EOL. 'DI one: $album = $di->get(\'My\Album\')' . PHP_EOL;
-$di = new \Zend\Di\DependencyInjector();
+$di = new \Zend\Di\Di();
 $album = $di->get('My\Album');
 var_dump($album);
 
