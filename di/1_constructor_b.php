@@ -44,3 +44,11 @@ $di = new \Zend\Di\Di();
 $album2 = $di->newInstance('My\Album', array('name'=>'Jonathan Coulton'));
 var_dump($album2);
 
+
+echo PHP_EOL. 'And again, but with different parameters: $album3 = $di->get(\'My\Album\', array(\'Train\')' . PHP_EOL;
+$album3 = $di->newInstance('My\Album', array('name'=>'Train'));
+var_dump($album3);
+
+
+echo PHP_EOL. 'Dumping $album2 again' . PHP_EOL;
+var_dump($album2);
