@@ -1,13 +1,31 @@
 <?php
 
+namespace My;
+
 include __DIR__ . "/../load_zf.php";
 
-// register the My/ namespace
-$autoLoader->registerNamespace('My', __DIR__ . '/My/');
+class DatabaseAdapter
+{
+    protected $dsn;
+
+    public function __construct($dsn)
+    {
+        $this->dsn = $dsn;
+    }
+}
+
+class UserTable
+{
+    protected $db;
+    
+    public function __construct (DatabaseAdapter $db)
+    {
+        $this->db = $db;
+    }
+}
 
 
-
-$di = new Zend\Di\Di();
+$di = new \Zend\Di\Di();
 $im = $di->instanceManager();
 
 $im->addAlias('adapter', 'My\DatabaseAdapter');
