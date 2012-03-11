@@ -26,19 +26,19 @@ class UserTable
 
 
 $di = new \Zend\Di\Di();
+$di->instanceManager()->addTypePreference('Zend\Di\Locator', $di);
 $im = $di->instanceManager();
 
 $im->addAlias('adapter', 'My\DatabaseAdapter');
 $im->addAlias('users', 'My\UserTable');
 
-$im->setParameters('adapter', array('dsn' => 'mysql:dbname=db1'));
-
+$im->setParameters('My\DatabaseAdapter', array('dsn' => 'mysql:dbname=db1'));
 
 // Test
 echo PHP_EOL . 'DI: $adapter = $di->get("adapter");' . PHP_EOL;
 $adapter = $di->get("adapter");
 var_dump($adapter);
 
-echo PHP_EOL . 'DI: $users = $di->get("users", array("dsn" => "mysql:dbname=db1"));' . PHP_EOL;
-$users = $di->get("users", array("dsn" => "mysql:dbname=db1"));
+echo PHP_EOL . 'DI: $users = $di->get("users");' . PHP_EOL;
+$users = $di->get("users");
 var_dump($users);
