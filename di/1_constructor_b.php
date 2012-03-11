@@ -1,54 +1,55 @@
 <?php
+// Test setting dependent parameters via constructor injection
 
 namespace My;
 
 include __DIR__ . "/../load_zf.php";
 
-class Artist
+class DatabaseAdapter
 {
-    protected $name;
-    public function __construct($name)
+    protected $dsn;
+
+    public function __construct($dsn)
     {
-        $this->name = $name;
+        $this->dsn = $dsn;
     }
 }
 
-class Album
+class UserTable
 {
-    protected $artist = null;
-
-    public function __construct(Artist $artist)
+    protected $db;
+    
+    public function __construct (DatabaseAdapter $db)
     {
-        $this->artist = $artist;
+        $this->db = $db;
     }
-
 }
 
 // Test it
 echo "Manual instantiation:\n";
-$album = new \My\Album(new \My\Artist('Queen'));
-var_dump($album);
-unset($album);
+$userTable = new \My\UserTable(new \My\DatabaseAdapter('mysql:dbname=manual'));
+var_dump($userTable);
+unset($userTable);
 
-echo PHP_EOL. 'Config injection of parameter one: $album = $di->get(\'My\Album\')' . PHP_EOL;
+echo PHP_EOL. 'Config injection of parameter one:'.PHP_EOL.'    $userTable = $di->get(\'My\UserTable\')' . PHP_EOL;
 $di = new \Zend\Di\Di();
-$di->instanceManager()->setParameters('My\Artist', array(
-        'name' => 'The Beatles',
+$di->instanceManager()->setParameters('My\DatabaseAdapter', array(
+        'dsn'=>'mysql:dbname=db1'
     ));
-$album = $di->get('My\Album');
-var_dump($album);
+$userTable = $di->get('My\UserTable');
+var_dump($userTable);
 
-echo PHP_EOL. 'Dynamic injection of parameter: $album2 = $di->get(\'My\Album\', array(\'Jonathan Coulton\')' . PHP_EOL;
-unset($di);
-$di = new \Zend\Di\Di();
-$album2 = $di->newInstance('My\Album', array('name'=>'Jonathan Coulton'));
-var_dump($album2);
+echo PHP_EOL. 'Dynamic injection of parameter:'.PHP_EOL.'    $userTable2 = $di->get(\'My\UserTable\', array(\'dsn\'=>\'mysql:dbname=db2\')' . PHP_EOL;
+$userTable2 = $di->get('My\UserTable', array('dsn'=>'mysql:dbname=db2'));
+var_dump($userTable2);
 
 
-echo PHP_EOL. 'And again, but with different parameters: $album3 = $di->get(\'My\Album\', array(\'Train\')' . PHP_EOL;
-$album3 = $di->newInstance('My\Album', array('name'=>'Train'));
-var_dump($album3);
+echo PHP_EOL. 'And again, but with different parameters:'.PHP_EOL.'    $userTable3 = $di->get(\'My\UserTable\', array(\'dsn\'=>\'mysql:dbname=db3\')' . PHP_EOL;
+$userTable3 = $di->get('My\UserTable', array('dsn'=>'mysql:dbname=db3'));
+var_dump($userTable3);
 
 
-echo PHP_EOL. 'Dumping $album2 again' . PHP_EOL;
-var_dump($album2);
+echo PHP_EOL. 'Get a new UserTable, but the same dbAdapter as used for $userTable2:'.PHP_EOL.'    $userTable4 = $di->newInstance(\'My\UserTable\', array(\'dsn\'=>\'mysql:dbname=db2\')' . PHP_EOL;
+$userTable4 = $di->get('My\UserTable', array('dsn'=>'mysql:dbname=db2'));
+var_dump($userTable4);
+

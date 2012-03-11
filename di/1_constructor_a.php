@@ -1,40 +1,40 @@
 <?php
+// Test that DI works (instantiates a DatabaseAdapter) and also check that
+// newInstance() creates a different object
 
 namespace My;
 
 include __DIR__ . "/../load_zf.php";
 
-class Artist
+class DatabaseAdapter
 {
-    
 }
 
-class Album
+class UserTable
 {
-    protected $artist = null;
-
-    public function __construct(Artist $artist)
+    protected $db;
+    
+    public function __construct (DatabaseAdapter $db)
     {
-        $this->artist = $artist;
+        $this->db = $db;
     }
-
 }
 
 // Test it
 echo "Manual instantiation:\n";
-$album = new \My\Album(new \My\Artist());
-var_dump($album);
-unset($album);
+$userTable = new \My\UserTable(new \My\DatabaseAdapter());
+var_dump($userTable);
+unset($userTable);
 
-echo PHP_EOL. 'DI one: $album = $di->get(\'My\Album\')' . PHP_EOL;
+echo PHP_EOL. 'DI one: $userTable = $di->get(\'My\UserTable\')' . PHP_EOL;
 $di = new \Zend\Di\Di();
-$album = $di->get('My\Album');
-var_dump($album);
+$userTable = $di->get('My\UserTable');
+var_dump($userTable);
 
-echo PHP_EOL. 'DI two: $album2 = $di->newInstance(\'My\Album\')' . PHP_EOL;
-$album2 = $di->newInstance('My\Album');
-var_dump($album2);
+echo PHP_EOL. 'DI two: $userTable2 = $di->newInstance(\'My\UserTable\')' . PHP_EOL;
+$userTable2 = $di->newInstance('My\UserTable');
+var_dump($userTable2);
 
-echo PHP_EOL. 'DI three: $albumAgain = $di->get(\'My\Album\')' . PHP_EOL;
-$albumAgain = $di->get('My\Album');
-var_dump($albumAgain);
+echo PHP_EOL. 'DI three: $userTableAgain = $di->get(\'My\UserTable\')' . PHP_EOL;
+$userTableAgain = $di->get('My\UserTable');
+var_dump($userTableAgain);
