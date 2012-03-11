@@ -2,11 +2,12 @@
 
 namespace My;
 
-class Artist
+class DatabaseAdapter
 {
-    protected $name;
-    public function __construct($name)
+    protected $dsn;
+    
+    public function __construct($dsn)
     {
-        $this->name = $name;
+        $this->dsn = $dsn;
     }
 }

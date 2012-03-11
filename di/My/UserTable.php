@@ -2,13 +2,13 @@
 
 namespace My;
 
-class Album
+class UserTable
 {
-    protected $artist = null;
+    protected $databaseAdapter = null;
 
-    public function __construct(Artist $artist)
+    public function __construct(DatabaseAdapter $databaseAdapter)
     {
-        $this->artist = $artist;
+        $this->databaseAdapter = $databaseAdapter;
     }
 
 }
