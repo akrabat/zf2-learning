@@ -7,20 +7,20 @@ $autoLoader->registerNamespace('My', __DIR__ . '/My/');
 
 
 
-$di = new Zend\Di\DependencyInjector();
-$im = $di->getInstanceManager();
+$di = new Zend\Di\Di();
+$im = $di->instanceManager();
 
-$im->addAlias('artist', 'My\Artist');
-$im->addAlias('album', 'My\Album');
+$im->addAlias('adapter', 'My\DatabaseAdapter');
+$im->addAlias('users', 'My\UserTable');
 
-$im->setParameters('artist', array('name' => 'The Beatles'));
+$im->setParameters('adapter', array('dsn' => 'mysql:dbname=db1'));
 
 
 // Test
-echo PHP_EOL . 'DI: $artist = $di->get("artist");' . PHP_EOL;
-$artist = $di->get("artist");
-var_dump($artist);
+echo PHP_EOL . 'DI: $adapter = $di->get("adapter");' . PHP_EOL;
+$adapter = $di->get("adapter");
+var_dump($adapter);
 
-echo PHP_EOL . 'DI: $album = $di->get("album", array("name" => "Queen"));' . PHP_EOL;
-$album = $di->get("album", array("name" => "Queen"));
-var_dump($album);
+echo PHP_EOL . 'DI: $users = $di->get("users", array("dsn" => "mysql:dbname=db1"));' . PHP_EOL;
+$users = $di->get("users", array("dsn" => "mysql:dbname=db1"));
+var_dump($users);
