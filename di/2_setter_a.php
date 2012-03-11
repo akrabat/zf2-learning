@@ -4,20 +4,21 @@ namespace My;
 
 include __DIR__ . "/../load_zf.php";
 
-class Artist
+class DatabaseAdapter
 {
-    protected $name;
-    public function __construct($name)
+    protected $dsn;
+
+    public function __construct($dsn)
     {
-        $this->name = $name;
+        $this->dsn = $dsn;
     }
 }
 
-class Album
+class UserTable
 {
     protected $artist;
     
-    public function setArtist(Artist $artist)
+    public function setDatabaseAdapter(DatabaseAdapter $artist)
     {
         $this->artist = $artist;
     }
@@ -26,43 +27,44 @@ class Album
 
 // Test it
 echo "Sanity check: manual instantiation:\n";
-$album = new \My\Album();
-$album->setArtist(new \My\Artist('Queen'));
-var_dump($album);
-unset($album);
+$userTable = new \My\UserTable();
+$databaseAdapter = new \My\DatabaseAdapter('mysql:dbname=manual');
+$userTable->setDatabaseAdapter($databaseAdapter);
+var_dump($userTable);
+unset($userTable);
 
 
-echo PHP_EOL. 'Config injection of parameter: $album = $di->get(\'My\Album\')' . PHP_EOL;
+echo PHP_EOL. 'Config injection of parameter: $userTable = $di->get(\'My\UserTable\')' . PHP_EOL;
 $di = new \Zend\Di\Di();
 $di->configure(new \Zend\Di\Configuration(array(
-        'definition' => array(
-            'class' => array(
-                'My\Album' => array(
-                    'setArtist' => array('required' => true)
-                )
+    'definition' => array(
+        'class' => array(
+            'My\UserTable' => array(
+                'setDatabaseAdapter' => array('required' => true)
             )
         )
-    )));
+    )
+)));
 
-$di->instanceManager()->setParameters('My\Artist', array(
-    'name' => 'The Beatles',
+$di->instanceManager()->setParameters('My\DatabaseAdapter', array(
+    'dsn'=>'mysql:dbname=db1',
 ));
-$album = $di->get('My\Album');
-var_dump($album);
+$userTable = $di->get('My\UserTable');
+var_dump($userTable);
 
+// unset($di);
+// $di = new \Zend\Di\Di();
 
-echo PHP_EOL. 'Dynamic injection of parameter: $album2 = $di->get(\'My\Album\', array(\'Jonathan Coulton\')' . PHP_EOL;
-unset($di);
-$di = new \Zend\Di\Di();
+echo PHP_EOL. 'Dynamic injection of parameter: $userTable2 = $di->get(\'My\UserTable\', array(\'dsn\'=>\'mysql:dbname=db2\')' . PHP_EOL;
 $di->configure(new \Zend\Di\Configuration(array(
         'definition' => array(
             'class' => array(
-                'My\Album' => array(
-                    'setArtist' => array('required' => true)
+                'My\UserTable' => array(
+                    'setDatabaseAdapter' => array('required' => true)
                 )
             )
         )
     )));
-$album2 = $di->newInstance('My\Album', array('name'=>'Jonathan Coulton'));
-var_dump($album2);
+$userTable2 = $di->newInstance('My\UserTable', array('dsn'=>'mysql:dbname=db2'));
+var_dump($userTable2);
 

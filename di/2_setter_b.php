@@ -34,7 +34,9 @@ unset($album);
 echo PHP_EOL. 'DI: $album = $di->get(\'My\Album\', array(\'Jonathan Coulton\')' . PHP_EOL;
 
 use Zend\Di\Di,
+    Zend\Di\DefinitionList,
     Zend\Di\Definition;
+
 
 // Create builder definitions
 $builderDef = new Definition\BuilderDefinition();
@@ -50,16 +52,8 @@ $class->addInjectionMethod($method);
 
 $builderDef->addClass($class);
 
-$diDefAggregate = new Definition\AggregateDefinition();
-// First add in our builder definition
-$diDefAggregate->addDefinition($builderDef);
-// Then add in the usual runtime one for My\Artist
-$diDefAggregate->addDefinition(new Definition\RuntimeDefinition());
-
+$di = new Di(new DefinitionList(array($builderDef)));
 
 // Test it
-$di = new \Zend\Di\DependencyInjector();
-$di->setDefinition($diDefAggregate);
-
 $album = $di->get('My\Album', array('artist'=>'Jonathan Coulton'));
 var_dump($album);
