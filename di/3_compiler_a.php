@@ -3,6 +3,10 @@
 
 include __DIR__ . "/../load_zf.php";
 
+if (file_exists(__DIR__ . '/My/DiDefinition.php')) {
+    unlink(__DIR__ . '/My/DiDefinition.php');
+}
+
 // register the My/ namespace
 $autoLoader->registerNamespace('My', __DIR__ . '/My/');
 
@@ -23,5 +27,5 @@ $userTable = $di->get('My\UserTable', array('dsn'=>'mysql:dbname=db1'));
 var_dump($userTable);
 
 // What the complication does it look like?
-echo PHP_EOL . 'ver_exported definition:' . PHP_EOL;
-echo var_export($definition->toArray(), true);
+// echo PHP_EOL . 'ver_exported definition:' . PHP_EOL;
+// echo var_export($definition->toArray(), true);
