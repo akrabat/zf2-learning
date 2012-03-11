@@ -2,48 +2,34 @@
 
 include __DIR__ . "/../load_zf.php";
 
-use Zend\EventManager;
+use Zend\EventManager\EventManager,
+    Zend\EventManager\Event;
 
-class MyTarget
-{
-    /**
-	 * @var EventManager
-	 */
-	protected $eventManager;
-    
-    public function __construct()
-    {
-        $this->eventManager = new EventManager\EventManager(__CLASS__);
-    }
-    
-    public function attachAListener()
-    {
-        $this->eventManager->attach('eventName', 
-            array($this, 'eventReceiverMethod'));
-    }
-    
-    public function eventReceiverMethod(EventManager\Event $e)
-    {
-        echo "An event has happened!\n";
-        var_dump($e->getName());
-        var_dump($e->getParams());
-    }
-    
-    
-    public function doSomethingThatTriggersAnEvent()
-    {
-        $this->eventManager->trigger('eventName', $this, 
-            array('one'=>1, 'two'=>2, 'three'=>3));
-    }
-}
 
-echo "\nLocal attachment\n";
-$obj = new MyTarget();
-$obj->attachAListener();
-$obj->doSomethingThatTriggersAnEvent();
+$callback = function ($event) {
+    echo "An event has happened!\n";
+    var_dump($event->getName());
+    var_dump($event->getParams());    
+};
+
+
+$eventManager = new EventManager('RKA');
+$eventManager->attach('eventName', $callback);
+
+
+echo "\nRaise an event\n";
+$eventManager->trigger('eventName', null, 
+    array('one'=>1, 'two'=>2));
+
+
 
 echo "\nStatic attachment\n";
-$obj = new MyTarget();
-$eventManager = EventManager\StaticEventManager::getInstance();
-$eventManager->attach(get_class($obj), 'eventName', array($obj, 'eventReceiverMethod'));
-$obj->doSomethingThatTriggersAnEvent();
+$events = \Zend\EventManager\StaticEventManager::getInstance();
+$events->attach('RKA', 'eventName', $callback);
+
+
+$event = new Event();
+$event->setTarget(null);
+$event->setParam('one', 1);
+
+$eventManager->trigger('eventName', $event);
