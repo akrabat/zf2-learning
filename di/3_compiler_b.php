@@ -1,53 +1,48 @@
 <?php
+// Test storing the compiled definitions to disk as a DI definition class
+// and then using that
 
 include __DIR__ . "/../load_zf.php";
+
+if (file_exists(__DIR__ . '/My/DiDefinition.php')) {
+    unlink(__DIR__ . '/My/DiDefinition.php');
+}
 
 // register the My/ namespace
 $autoLoader->registerNamespace('My', __DIR__ . '/My/');
 
 
 // Compilation
-$compiler = new Zend\Di\Definition\Compiler();
-$compiler->addCodeScannerDirectory(
-    new Zend\Code\Scanner\DirectoryScanner(__DIR__ . '/My/')
-);
-$definition = $compiler->compile();
+$compiler = new Zend\Di\Definition\CompilerDefinition();
+$compiler->addDirectory(__DIR__ . '/My/');
+$compiler->compile();
+$definition = $compiler->toArrayDefinition();
 
 // create the PHP class definition
-$class = new Zend\CodeGenerator\Php\PhpClass();
+$class = new Zend\Code\Generator\ClassGenerator();
 $class->setName('DiDefinition');
 $class->setExtendedClass('ArrayDefinition');
-$class->setMethod(array(
-    'name' => '__construct',
-    'body' => 'parent::__construct(' . var_export($definition->toArray(), true) . ');'
-));
 
+$method = new Zend\Code\Generator\MethodGenerator('__construct');
+$method->setBody('parent::__construct(' . var_export($definition->toArray(), true) . ');');
+
+
+$class->setMethod($method);
 // Generate the code
-$codeGenerator = new Zend\CodeGenerator\Php\PhpFile();
+$codeGenerator = new Zend\Code\Generator\FileGenerator();
 $codeGenerator->setNamespace('My');
 $codeGenerator->setUse('\Zend\Di\Definition\ArrayDefinition');
 $codeGenerator->setClass($class);
 file_put_contents(__DIR__ . '/My/DiDefinition.php', $codeGenerator->generate());
 
-//var_dump($codeGenerator->generate());
 
+// Set up DI
+$myDefinition = new My\DiDefinition();
+$definitions = new Zend\Di\DefinitionList($myDefinition);
+$di = new Zend\Di\Di($definitions);
 
-// Now use it:
-use Zend\Di\DependencyInjector,
-    Zend\Di\Definition,
-    Zend\Di\Definition\Builder;
- 
-$di = new DependencyInjector;
-$diDefAggregate = new Definition\AggregateDefinition();
- 
-// first add in provided Definitions, for example
-$diDefAggregate->addDefinition(new My\DiDefinition());
-//$diDefAggregate->addDefinition(new Another\DiDefinition());
-$diDefAggregate->addDefinition(new Definition\RuntimeDefinition());
- 
-$di->setDefinition($diDefAggregate);
 
 // Test
-echo PHP_EOL . 'DI: $album = $di->get(\'My\Album\', array(\'Jonathan Coulton\')' . PHP_EOL;
-$album = $di->get('My\Album', array('name' => 'Jonathan Coulton'));
-var_dump($album);
+echo PHP_EOL . 'DI: $userTable = $di->get(\'My\UserTable\', array(\'dsn\'=>\'mysql:dbname=db1\')' . PHP_EOL;
+$userTable = $di->get('My\UserTable', array('dsn'=>'mysql:dbname=db1'));
+var_dump($userTable);
